@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  # database service
+  mongo_db:
+    container_name: db_container
+    image: mongo:4.0-xenial
+    ports:
+      - 27017:27017
+    volumes:
+      - db:/data/db
+    restart: unless-stopped
+
+  #Api service
+  api: 
+    container_name: api
+    build: .
+    ports:
+      - 3000:3000
+    env_file: .env
+    environment:
+      DB_URL: mongodb://mongo_db/node-mongo
+    volumes:
+     - .:/app
+    restart: always
+    depends_on:
+     - mongo_db
+
+volumes:
+  db:
